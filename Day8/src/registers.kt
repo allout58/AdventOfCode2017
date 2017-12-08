@@ -1,10 +1,13 @@
 import java.io.File
+import kotlin.math.max
 
 fun main(args: Array<String>) {
-    val filename = "input.txt"
+    val filename = "test.txt"
     val file = File(filename)
     val regex = Regex("([a-z]+) (inc|dec) (-?\\d+) if ([a-z]+) ([<>!=]{1,2}) (-?\\d+)")
     val registers = HashMap<String, Int>()
+
+    var maxRegValue = 0
 
     for (line in file.readLines()) {
         val match = regex.matchEntire(line)
@@ -28,8 +31,10 @@ fun main(args: Array<String>) {
             }
             if (doOp) {
                 registers[reg] = (registers[reg] ?: 0) + if (op == "inc") delta else if (op == "dec") -1 * delta else throw Exception("Invalid op `$op` on line `$line`")
+                maxRegValue = max(registers[reg] ?: 0, maxRegValue)
             }
         }
     }
     println("Largest value in any register is ${registers.map { it.value }.max()}")
+    println("Largest value at any time is $maxRegValue")
 }
