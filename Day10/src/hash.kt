@@ -1,28 +1,28 @@
+import java.io.File
+
 fun main(args: Array<String>) {
-//    val list = (0..4).toMutableList()
     val list = (0..255).toMutableList()
     var currentPosition = 0
     var skipSize = 0
-//    val lengths = arrayOf(3, 4, 1, 5)
-    val lengths = arrayOf(14, 58, 0, 116, 179, 16, 1, 104, 2, 254, 167, 86, 255, 55, 122, 244)
+    val input = File("input.txt").readText().trim().toCharArray().map { it.toInt() }
+    val lengths = arrayListOf<Int>()
+    lengths.addAll(input)
+    lengths.addAll(arrayOf(17, 31, 73, 47, 23))
 
-    for (len in lengths) {
-        if (len != 0) {
-            list.reverseSublistCircular(currentPosition, (currentPosition + len - 1) % list.size)
+    repeat(64) {
+        for (len in lengths) {
+            if (len != 0) {
+                list.reverseSublistCircular(currentPosition, (currentPosition + len - 1) % list.size)
+            }
+            currentPosition = (currentPosition + len + skipSize) % list.size
+            skipSize++
         }
-        currentPosition = (currentPosition + len + skipSize) % list.size
-        skipSize++
-//        println("Len: $len, Position: $currentPosition, SkipSize: $skipSize")
-//        println(list)
-//        println()
     }
-
-    println(list)
-    println("Numbers ${list[0] * list[1]}")
+    val denseHash = (0..15).map { list.subList(it * 16, (it + 1) * 16).reduce { acc, next -> acc xor next } }
+    println("Dense Hash: ${denseHash.joinToString("") { it.toString(16).padStart(2, '0') }}")
 }
 
 fun <E> MutableList<E>.reverseSublistCircular(from: Int, to: Int) {
-//    println("Swapping from $from to $to inclusive")
     var front = from
     var back = to
 
