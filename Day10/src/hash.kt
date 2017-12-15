@@ -7,9 +7,14 @@ fun main(args: Array<String>) {
     val lengths = arrayOf(14, 58, 0, 116, 179, 16, 1, 104, 2, 254, 167, 86, 255, 55, 122, 244)
 
     for (len in lengths) {
-        list.reverseSublistCircular(currentPosition, (currentPosition + len - 1) % list.size)
+        if (len != 0) {
+            list.reverseSublistCircular(currentPosition, (currentPosition + len - 1) % list.size)
+        }
         currentPosition = (currentPosition + len + skipSize) % list.size
         skipSize++
+//        println("Len: $len, Position: $currentPosition, SkipSize: $skipSize")
+//        println(list)
+//        println()
     }
 
     println(list)
@@ -17,6 +22,7 @@ fun main(args: Array<String>) {
 }
 
 fun <E> MutableList<E>.reverseSublistCircular(from: Int, to: Int) {
+//    println("Swapping from $from to $to inclusive")
     var front = from
     var back = to
 
