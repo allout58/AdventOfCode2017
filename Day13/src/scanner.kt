@@ -1,53 +1,15 @@
 import java.io.File
 
 fun main(args: Array<String>) {
-    val firewalls = HashMap<Int, Int>()
-    File("input.txt").readLines().forEach {
-        val splits = it.split(": ")
-        firewalls.put(splits[0].toInt(), splits[1].toInt())
-    }
+    val firewalls = File("input.txt").readLines().map { it.split(": ").map { it.toInt() } }
+            .associate { it.first() to it.last() }
 
-    val maxDepth = firewalls.keys.max()!!
+    val severity = firewalls.map { if (it.key % (2 * (it.value - 1)) == 0) it.key * it.value else 0 }.sum()
+    var delay = 0
+    while (firewalls.filter { (it.key + delay) % (2 * (it.value - 1)) == 0 }.isNotEmpty())
+        delay++
 
-    var severity = 0
-    val positions = Array(maxDepth + 1) { Scanner(-1) }
-    firewalls.keys.forEach { positions[it].position = 0 }
-
-
-    for (myDepth in 0..maxDepth) {
-        if (positions[myDepth].position == 0) {
-            severity += myDepth * (firewalls[myDepth] ?: 0)
-        }
-        updateScanners(firewalls, positions)
-    }
-
-    println("Final Severity: $severity")
+    println("Severity: $severity")
+    println("Delay: $delay")
 }
 
-fun updateScanners(firewalls: HashMap<Int, Int>, positions: Array<Scanner>) {
-    for ((ndx, scan) in positions.withIndex()) {
-        val range = firewalls[ndx]
-        if (range != null) {
-            if (scan.goingDown) {
-                if (scan.position == range - 1) {
-                    scan.goingDown = false
-                    scan.position--
-                }
-                else {
-                    scan.position++
-                }
-            }
-            else {
-                if (scan.position == 0) {
-                    scan.goingDown = true
-                    scan.position++
-                }
-                else {
-                    scan.position--
-                }
-            }
-        }
-    }
-}
-
-data class Scanner(var position: Int, var goingDown: Boolean = true)
